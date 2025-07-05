@@ -34,7 +34,10 @@ public class ConsentModel : PageModel
                        ?? throw new InvalidOperationException("Missing consent context.");
         var scopeRaw = HttpContext.Session.GetString("oidc_scope")
                        ?? throw new InvalidOperationException("Missing consent context.");
-        ReturnUrl = HttpContext.Session.GetString("return_url") ?? ReturnUrl;
+        
+        ReturnUrl = HttpContext.Session
+                            .GetString("return_url")
+                        ?? throw new InvalidOperationException("Missing return_url in session.");
 
         // Split out the scopes to show
         Scopes = scopeRaw
@@ -70,6 +73,10 @@ public class ConsentModel : PageModel
         var claimType = $"consent:{clientId}";
         var existingClaim = (await _users.GetClaimsAsync(user))
                              .FirstOrDefault(c => c.Type == claimType);
+        
+        ReturnUrl = HttpContext.Session
+                        .GetString("return_url")
+                    ?? throw new InvalidOperationException("Missing return_url in session.");
 
         // Merge old + new
         var all = new HashSet<string>(
