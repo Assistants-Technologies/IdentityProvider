@@ -1,0 +1,71 @@
+﻿@page
+@model Infra.Modules.IdentityProvider.Pages.LoginModel
+@{
+    ViewData["Title"] = "Logowanie";
+    Layout = "_Layout";
+}
+
+<div class="bg-white shadow-md rounded px-8 py-6">
+  <h1 class="text-2xl font-bold mb-4">Zaloguj się</h1>
+
+  @if (Model.ErrorMessage != null)
+  {
+    <div class="bg-red-100 text-red-700 px-4 py-2 rounded mb-4">
+      @Model.ErrorMessage
+    </div>
+  }
+
+  <form method="post" class="space-y-4">
+    <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+
+    <div>
+      <label asp-for="Input.Email" class="block text-sm font-medium text-gray-700"></label>
+      <input asp-for="Input.Email" class="mt-1 block w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300" />
+      <span asp-validation-for="Input.Email" class="text-red-600 text-sm"></span>
+    </div>
+
+    <div>
+      <label asp-for="Input.Password" class="block text-sm font-medium text-gray-700"></label>
+      <input asp-for="Input.Password" class="mt-1 block w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300" />
+      <span asp-validation-for="Input.Password" class="text-red-600 text-sm"></span>
+    </div>
+
+    <div class="flex items-center">
+      <input asp-for="Input.RememberMe" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+      <label asp-for="Input.RememberMe" class="ml-2 block text-sm text-gray-900"></label>
+    </div>
+
+    <button type="submit"
+            class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">
+      Zaloguj
+    </button>
+  </form>
+
+  @if (Model.ExternalLogins?.Count > 0)
+  {
+    <div class="mt-6 text-center">
+      <p class="text-sm text-gray-500 mb-2">Albo zaloguj się przez:</p>
+      <div class="space-x-2">
+        @foreach (var provider in Model.ExternalLogins)
+        {
+          <form method="post" asp-page-handler="ExternalLogin" class="inline">
+            <input type="hidden" name="provider" value="@provider.Name" />
+            <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+            <button type="submit"
+                    class="inline-flex items-center px-4 py-2 border border-gray-300 rounded hover:bg-gray-50">
+              @provider.DisplayName
+            </button>
+          </form>
+        }
+      </div>
+    </div>
+  }
+
+  <div class="mt-4 text-center text-sm">
+    <a asp-page="./ForgotPassword" class="text-blue-600 hover:underline">Nie pamiętasz hasła?</a>
+  </div>
+</div>
+
+@section Scripts {
+  <partial name="_ValidationScriptsPartial" />
+}

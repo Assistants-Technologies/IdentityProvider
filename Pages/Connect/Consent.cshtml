@@ -1,0 +1,19 @@
+@page
+@model Infra.Modules.IdentityProvider.Pages.Connect.ConsentModel
+@{
+    ViewData["Title"] = "Zgoda na udostępnienie danych";
+}
+
+<h2>Ta aplikacja chce uzyskać dostęp do Twoich danych:</h2>
+
+<ul>
+    @foreach (var scope in Model.Scopes)
+    {
+        <li>@scope</li>
+    }
+</ul>
+
+<form method="post">
+    <button type="submit" name="submit" value="accept">Zgadzam się</button>
+    <button type="submit" name="submit" value="deny">Anuluj</button>
+</form>

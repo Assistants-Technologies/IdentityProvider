@@ -1,0 +1,54 @@
+# 🔧 Build artifacts
+bin/
+obj/
+out/
+*.log
+
+# 🐳 Docker
+*.tar
+docker-compose.override.yml
+
+# ⚙️ Rider / JetBrains IDEs
+.idea/
+*.sln.iml
+
+# 💻 Visual Studio
+.vs/
+*.user
+*.suo
+
+# 🔐 Env files
+.env*
+*.env.local
+
+# 🧪 Test results / coverage
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+# 📦 NuGet
+*.nupkg
+*.snupkg
+packages/
+*.nuspec
+
+# 🛠 dotnet tools
+.dotnet-tools/
+
+# 🧼 System files
+.DS_Store
+Thumbs.db
+
+# 📁 Logs, temp, misc
+*.tmp
+*.bak
+*.swp
+*.orig
+
+# 🚀 Publish output
+publish/
+*.Publish.xml
+
+# ⚙️ Global.json lock file
+global.json.lock
