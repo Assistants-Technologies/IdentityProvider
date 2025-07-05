@@ -16,6 +16,7 @@ WORKDIR /app
 
 # Expose port 80
 EXPOSE 80
+EXPOSE 443
 
 # Copy published output
 COPY --from=build /app/publish .

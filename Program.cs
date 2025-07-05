@@ -1,24 +1,30 @@
 using Infra.Modules.IdentityProvider.Data;
 using Infra.Modules.IdentityProvider.Data.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation; 
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+if (builder.Environment.IsDevelopment())
+{
+    // tylko w dev włączamy gorące przeładowanie widoków
+    builder.Services
+        .AddRazorPages()
+        .AddRazorRuntimeCompilation();
+}
+else
+{
+    builder.Services.AddRazorPages();
+}
 
 // === DB + OpenIddict ===
 builder.Services.AddDbContext<IdentityProviderDbContext>(options =>
 {
     options.UseNpgsql(Environment.GetEnvironmentVariable("IDP_CONNECTION_STRING"));
     options.UseOpenIddict();
-});
-
-// === Cookie auth config ===
-builder.Services.ConfigureApplicationCookie(opt =>
-{
-    opt.LoginPath = "/Login";
-    opt.AccessDeniedPath = "/AccessDenied";
-    opt.ExpireTimeSpan = TimeSpan.FromMinutes(15);
-    opt.SlidingExpiration = true;
 });
 
 // === OpenIddict ===
@@ -53,14 +59,21 @@ builder.Services.AddOpenIddict()
 
 // === Identity + UI ===
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
-    {
+builder.Services
+    .AddIdentity<ApplicationUser, IdentityRole>(options => {
         options.SignIn.RequireConfirmedAccount = false;
     })
-    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<IdentityProviderDbContext>()
-    .AddDefaultTokenProviders()
-    .AddDefaultUI();
+    .AddDefaultTokenProviders();
+
+// === Cookie auth config ===
+builder.Services.ConfigureApplicationCookie(opt =>
+{
+    opt.LoginPath = "/login";
+    opt.AccessDeniedPath = "/accessdenied";
+    opt.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+    opt.SlidingExpiration = true;
+});
 
 // === Session ===
 builder.Services.AddDistributedMemoryCache();

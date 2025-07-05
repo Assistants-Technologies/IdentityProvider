@@ -1,2 +1,28 @@
 @page
-Hello, world!
+@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<article class="prose dark:prose-invert mx-auto text-center">
+    <h2 class="text-2xl font-semibold">Access Denied</h2>
+
+    <p>
+        You’ve called the <code>/connect/authorize</code> endpoint without a valid OAuth 2.0 authorization request.  
+        This endpoint must receive a properly formatted request including <code>client_id</code>, <code>redirect_uri</code>, <code>scope</code> and <code>state</code> parameters.
+    </p>
+
+    <p>
+        Direct navigation or missing parameters will always be rejected.  
+        To begin an authentication flow, please initiate authorization from a registered client application.
+    </p>
+
+    <p>
+        If you believe this is incorrect or need further assistance, please contact  
+        <a
+            href="mailto:@(Environment.GetEnvironmentVariable("SUPPORT_EMAIL") ?? "support@example.com")"
+            class="font-medium text-indigo-600 hover:text-indigo-500 dark:hover:text-indigo-300"
+        >
+            @(Environment.GetEnvironmentVariable("SUPPORT_EMAIL") ?? "support@example.com")
+        </a>
+    </p>
+</article>

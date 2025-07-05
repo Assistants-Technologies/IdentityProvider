@@ -1,0 +1,24 @@
+# Stage 1: Build + Runtime (hot-reload)
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS runtime
+WORKDIR /src
+
+ENV ASPNETCORE_URLS=http://+:80
+ENV DOTNET_WATCH_RESTART_ON_RUDE_EDIT=true
+ENV DOTNET_USE_POLLING_FILE_WATCHER=true
+
+# Instalacja zależności + narzędzi do debugowania (opcjonalne)
+RUN apt-get update && apt-get install -y curl procps && rm -rf /var/lib/apt/lists/*
+
+# Kopiowanie projektu i restore
+COPY *.csproj .
+RUN dotnet restore
+
+# Kopiowanie reszty kodu
+COPY . .
+
+# Port wewnętrzny (nie eksponowany na hosta)
+EXPOSE 80
+
+# Uruchomienie z hot-reload
+ENTRYPOINT ["dotnet", "watch"]
+CMD ["run", "--no-restore", "--urls", "http://+:80"]

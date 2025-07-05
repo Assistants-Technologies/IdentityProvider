@@ -1,16 +1,56 @@
+@using System
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>@ViewData["Title"] – IdentityProvider SSO</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="flex items-center justify-center min-h-screen bg-gray-100">
+    <meta name="robots" content="noindex,nofollow" />
+    <title>@ViewData["Title"] – @(Environment.GetEnvironmentVariable("COMPANY_NAME") ?? "YourCompany") Identity</title>
 
-<div class="w-full max-w-md p-8 bg-white rounded-lg shadow">
-    @RenderBody()
-</div>
+    <!-- Define semantic palette with dark-mode overrides -->
+    <style type="text/tailwindcss">
+      :root {
+        /* Primary */
+        --color-primary:       #3b82f6;
+        --color-primary-light: #93c5fd;
+
+        /* Neutral (light mode) */
+        --color-neutral-bg:    #ffffff;
+        --color-neutral-card:  #f9fafb;
+        --color-neutral-text:  #111827;
+      }
+      @@media (prefers-color-scheme: dark) {
+        :root {
+          --color-neutral-bg:   #111827;
+          --color-neutral-card: #1f2937;
+          --color-neutral-text: #f9fafb;
+        }
+      }
+    </style>
+
+    <!-- Tailwind v4 + plugins -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
+    <style>
+      /* Catalyst base font */
+      body { font-family: ui-sans-serif, system-ui, -apple-system; }
+    </style>
+</head>
+<body class="bg-[var(--color-neutral-bg)] text-[var(--color-neutral-text)]">
+<main class="flex flex-col items-center justify-center min-h-screen px-6 py-12">
+    <h1 class="text-4xl font-bold leading-tight text-center mb-8
+               text-[var(--color-primary)] dark:text-[var(--color-primary-light)]">
+        @Environment.GetEnvironmentVariable("COMPANY_NAME")
+        <span class="text-[var(--color-neutral-text)] dark:text-[var(--color-neutral-text)]">
+            Identity
+        </span>
+    </h1>
+
+    <div class="w-full max-w-lg 
+                bg-[var(--color-neutral-card)] 
+                rounded-xl shadow-md dark:shadow-xl p-8">
+        @RenderBody()
+    </div>
+</main>
 
 @await RenderSectionAsync("Scripts", required: false)
 </body>

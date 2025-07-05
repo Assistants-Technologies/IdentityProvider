@@ -1,19 +1,54 @@
 @page
+@using OpenIddict.Abstractions
 @model Infra.Modules.IdentityProvider.Pages.Connect.ConsentModel
 @{
-    ViewData["Title"] = "Zgoda na udostępnienie danych";
+    ViewData["Title"] = "Consent";
+    Layout = "_Layout";
 }
 
-<h2>Ta aplikacja chce uzyskać dostęp do Twoich danych:</h2>
+<article class="pros mx-auto lg:prose-lg dark:prose-invert text-center">
+    <h4 class="font-semibold mb-6">
+        @Model.ClientDisplayName <span class="text-gray-600 dark:text-gray-400">@Model.PromptText</span>
+    </h4> 
+   
+    <p class="text-gray-700 dark:text-gray-300">
+        The application will be able to:
+    </p> 
 
-<ul>
-    @foreach (var scope in Model.Scopes)
-    {
-        <li>@scope</li>
-    }
-</ul>
+    <ul class="list-disc list-inside mb-8 text-left max-w-sm mx-auto">
+        @foreach (var scope in Model.Scopes)
+        {
+            <li>
+                @switch (scope)
+                {
+                    case OpenIddictConstants.Scopes.OpenId:
+                        @:<strong>Authenticate you</strong> (identify your user account)
+                        break;
+                    case OpenIddictConstants.Scopes.Email:
+                        @:<strong>Read your email address</strong>
+                        break;
+                    case OpenIddictConstants.Scopes.Profile:
+                        @:<strong>Read your basic profile information</strong>
+                        break;
+                    case OpenIddictConstants.Scopes.OfflineAccess:
+                        @:<strong>Maintain access when you’re offline</strong>
+                        break;
+                    default:
+                        @:<strong>@scope</strong>
+                        break;
+                }
+            </li>
+        }
+    </ul>
 
-<form method="post">
-    <button type="submit" name="submit" value="accept">Zgadzam się</button>
-    <button type="submit" name="submit" value="deny">Anuluj</button>
-</form>
+    <form method="post" class="flex justify-center space-x-4">
+        <button type="submit" name="submit" value="accept"
+                class="rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition">
+            Allow
+        </button>
+        <button type="submit" name="submit" value="deny"
+                class="rounded-lg border border-gray-300 px-6 py-2 text-gray-700 hover:bg-gray-100 focus:ring-2 focus:ring-gray-400 transition dark:text-gray-300">
+            Deny
+        </button> 
+    </form> 
+</article>
