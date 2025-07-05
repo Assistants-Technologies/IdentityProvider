@@ -1,8 +1,6 @@
 using Infra.Modules.IdentityProvider.Data;
 using Infra.Modules.IdentityProvider.Data.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation; 
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 if (builder.Environment.IsDevelopment())
 {
-    // tylko w dev włączamy gorące przeładowanie widoków
     builder.Services
         .AddRazorPages()
         .AddRazorRuntimeCompilation();
