@@ -95,16 +95,16 @@ public static class OpenIddictSeeder
             }
 
             // 4. Dashboard client (ma dostęp do wszystkiego)
-            if (await appMgr.FindByClientIdAsync("dashboard-client") is null)
+            if (await appMgr.FindByClientIdAsync(Environment.GetEnvironmentVariable("IDP_ACC_PANEL_CLIENT_ID")!) is null)
             {
                 await appMgr.CreateAsync(new OpenIddictApplicationDescriptor
                 {
                     ClientType    = ClientTypes.Confidential,
-                    ClientId      = "dashboard-client",
-                    ClientSecret  = "dashboard-secret",
-                    DisplayName   = "Dashboard App",
-                    RedirectUris  = { new Uri("https://dashboard.localhost:3000/callback") },
-                    PostLogoutRedirectUris = { new Uri("https://dashboard.localhost:3000/logout") },
+                    ClientId      =  Environment.GetEnvironmentVariable("IDP_ACC_PANEL_CLIENT_ID"),
+                    ClientSecret  = Environment.GetEnvironmentVariable("IDP_ACC_PANEL_CLIENT_SECRET"),
+                    DisplayName   = Environment.GetEnvironmentVariable("IDP_ACC_PANEL_CLIENT_DISPLAY_NAME"),
+                    RedirectUris  = { new Uri(Environment.GetEnvironmentVariable("IDP_ACC_PANEL_REDIRECT_URI")!) },
+                    PostLogoutRedirectUris = { new Uri(Environment.GetEnvironmentVariable("IDP_ACC_PANEL_POST_LOGOUT_REDIRECT_URI")!) },
                     Permissions =
                     {
                         Permissions.Endpoints.Authorization,
@@ -118,10 +118,8 @@ public static class OpenIddictSeeder
                         Permissions.Scopes.Profile,
                         Scopes.OfflineAccess,
 
-                        // Uprawnienia do API
                         Permissions.Prefixes.Scope + "api:store",
                         Permissions.Prefixes.Scope + "api:account",
-                        Permissions.Prefixes.Scope + "api:dashboard"
                     }
                 });
             }

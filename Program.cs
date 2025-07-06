@@ -1,10 +1,15 @@
+using System.Net;
+using Infra.Modules.IdentityProvider;
 using Infra.Modules.IdentityProvider.Data;
 using Infra.Modules.IdentityProvider.Data.Entities;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using OpenIddict.Server;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 if (builder.Environment.IsDevelopment())
 {
@@ -37,6 +42,40 @@ builder.Services.AddOpenIddict()
         opt.AllowAuthorizationCodeFlow()
             .AllowClientCredentialsFlow()
             .AllowRefreshTokenFlow();
+        
+
+        opt.AddEventHandler<OpenIddictServerEvents.ApplyAuthorizationResponseContext>(builder =>
+        {
+            builder.UseInlineHandler(context =>
+            {
+                if (!string.IsNullOrEmpty(context.Response.Error))
+                {
+                    var error   = context.Response.Error;
+                    var desc    = context.Response.ErrorDescription ?? "";
+                    var message = WebUtility.UrlEncode($"{error}: {desc}");
+
+                    var clientId = context.Request.ClientId ?? "unknown_client";
+
+                    var http    = context.Transaction.GetHttpRequest().HttpContext.Request;
+                    var original = WebUtility.UrlEncode(http.Path + http.QueryString);
+
+                    var redirect = $"/Error?code=400" +
+                                   $"&message={message}" +
+                                   $"&client_id={WebUtility.UrlEncode(clientId)}" +
+                                   $"&original={original}";
+
+                    context.Transaction
+                        .GetHttpRequest()
+                        .HttpContext
+                        .Response
+                        .Redirect(redirect);
+
+                    context.HandleRequest();
+                }
+
+                return default;
+            });
+        });
 
         opt.RegisterScopes("openid", "email", "profile", "offline_access");
 
@@ -83,14 +122,8 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
-// === Seed Data ===
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<IdentityProviderDbContext>();
-    await context.Database.MigrateAsync();
-    
-    await OpenIddictSeeder.SeedAsync(scope.ServiceProvider);
-}
+app.UseExceptionHandler("/Error");
+app.UseStatusCodePagesWithReExecute("/Error", "?code={0}");
 
 // === Middleware ===
 app.UseHttpsRedirection();

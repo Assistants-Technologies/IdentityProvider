@@ -1,0 +1,41 @@
+@page "{code:int?}"
+@model Infra.Modules.IdentityProvider.Pages.ErrorModel
+@{
+    Layout = "_Layout";
+    Response.StatusCode = Model.Code ?? 500;
+    ViewData["Title"] = $"Error {Model.Code}";
+}
+
+<article class="prose lg:prose-lg dark:prose-invert mx-auto text-center">
+    <h2 class="text-2xl font-semibold mb-4">An Error Occurred (@Model.Code)</h2>
+
+    <p class="mt-2 text-gray-700 dark:text-gray-300">
+        @(
+        string.IsNullOrEmpty(Model.Message)
+            ? "An unexpected error occurred. Please try again later."
+            : Model.Message
+        )
+    </p>
+
+    @if (!string.IsNullOrEmpty(Model.ClientId))
+    {
+        <p class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+            <strong>Client ID:</strong> <code>@Model.ClientId</code>
+        </p>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.Original))
+    {
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400 break-words">
+            <strong>Original Request:</strong> <code>@Model.Original</code>
+        </p>
+    }
+
+    <p class="mt-6">
+        If you believe this is an error, please contact
+        <a href="mailto:@Model.SupportEmail"
+           class="font-medium text-primary hover:underline">
+            @Model.SupportEmail
+        </a>
+    </p>
+</article>

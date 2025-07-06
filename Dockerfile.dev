@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y curl procps && rm -rf /var/lib/apt/list
 
 # Kopiowanie projektu i restore
 COPY *.csproj .
-RUN dotnet restore
+RUN dotnet restore --no-cache
 
 # Kopiowanie reszty kodu
 COPY . .
