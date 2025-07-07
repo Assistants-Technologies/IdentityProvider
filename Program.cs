@@ -1,12 +1,13 @@
+using System;
 using System.Net;
-using Infra.Modules.IdentityProvider;
 using Infra.Modules.IdentityProvider.Data;
 using Infra.Modules.IdentityProvider.Data.Entities;
 using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using OpenIddict.Server;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,7 +26,7 @@ else
 // === DB + OpenIddict ===
 builder.Services.AddDbContext<IdentityProviderDbContext>(options =>
 {
-    options.UseNpgsql(Environment.GetEnvironmentVariable("IDP_CONNECTION_STRING"));
+    options.UseNpgsql(Environment.GetEnvironmentVariable("IDP_CONNECTION_STRING")!);
     options.UseOpenIddict();
 });
 
@@ -103,7 +104,7 @@ builder.Services
     })
     .AddEntityFrameworkStores<IdentityProviderDbContext>()
     .AddDefaultTokenProviders();
-
+ 
 // === Cookie auth config ===
 builder.Services.ConfigureApplicationCookie(opt =>
 {
@@ -124,6 +125,23 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var db = scope.ServiceProvider.GetRequiredService<IdentityProviderDbContext>();
+    await db.Database.MigrateAsync();
+
+    try
+    {
+        await OpenIddictSeeder.SeedAsync(services);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"OpenIddict seeding failed: {ex.Message}");
+        throw;
+    }
+}
+
 app.UseExceptionHandler("/Error");
 app.UseStatusCodePagesWithReExecute("/Error", "?code={0}");
 
@@ -132,11 +150,11 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-app.UseSession();
+app.UseSession(); 
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
 
-await app.RunAsync("https://0.0.0.0:443");
+await app.RunAsync();

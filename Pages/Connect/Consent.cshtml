@@ -10,8 +10,6 @@
     <h4 class="font-semibold mb-6">
         @Model.ClientDisplayName <span class="text-gray-600 dark:text-gray-400">@Model.PromptText</span>
     </h4> 
-   
-    @Model.ReturnUrl
     
     <p class="text-gray-700 dark:text-gray-300">
         The application will be able to:
@@ -34,6 +32,12 @@
                         break;
                     case OpenIddictConstants.Scopes.OfflineAccess:
                         @:<strong>Maintain access when you’re offline</strong>
+                        break;
+                    case "api:store":
+                        @:<strong>Place orders for you</strong>
+                        break;
+                    case "api:account":
+                        @:<strong>Manage your account settings</strong>
                         break;
                     default:
                         @:<strong>@scope</strong>
