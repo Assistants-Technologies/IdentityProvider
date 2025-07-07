@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS runtime
 WORKDIR /src
 
-ENV ASPNETCORE_URLS=http://+:80
+ENV ASPNETCORE_URLS=https://+:443
 ENV DOTNET_WATCH_RESTART_ON_RUDE_EDIT=true
 ENV DOTNET_USE_POLLING_FILE_WATCHER=true
 
@@ -17,8 +17,8 @@ RUN dotnet restore --no-cache
 COPY . .
 
 # Port wewnętrzny (nie eksponowany na hosta)
-EXPOSE 80
+EXPOSE 443
 
 # Uruchomienie z hot-reload
 ENTRYPOINT ["dotnet", "watch"]
-CMD ["run", "--no-restore", "--urls", "http://+:80"]
+CMD ["run", "--no-restore", "--urls", "https://+:443"]

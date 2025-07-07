@@ -43,6 +43,8 @@ builder.Services.AddOpenIddict()
             .AllowClientCredentialsFlow()
             .AllowRefreshTokenFlow();
         
+        opt.SetIssuer(Environment.GetEnvironmentVariable("IDP_ISSUER")!);
+        
 
         opt.AddEventHandler<OpenIddictServerEvents.ApplyAuthorizationResponseContext>(builder =>
         {
@@ -80,8 +82,8 @@ builder.Services.AddOpenIddict()
         opt.RegisterScopes("openid", "email", "profile", "offline_access");
 
         opt.UseAspNetCore()
-            .EnableAuthorizationEndpointPassthrough()
             .DisableTransportSecurityRequirement()
+            .EnableAuthorizationEndpointPassthrough()
             .EnableStatusCodePagesIntegration();
 
         opt.AddDevelopmentEncryptionCertificate();
@@ -137,4 +139,4 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 
-await app.RunAsync();
+await app.RunAsync("https://0.0.0.0:443");

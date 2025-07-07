@@ -14,8 +14,7 @@ RUN dotnet publish -c Release -o /app/publish
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 
-# Expose port 80
-EXPOSE 80
+# Expose port 443
 EXPOSE 443
 
 # Copy published output
