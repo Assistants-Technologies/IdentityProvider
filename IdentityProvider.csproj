@@ -38,6 +38,7 @@
 
     <ItemGroup>
       <AdditionalFiles Include="Pages\Login.cshtml" />
+        <AdditionalFiles Include="Pages\Register.cshtml" />
       <AdditionalFiles Include="Pages\Shared\_Layout.cshtml" />
       <AdditionalFiles Include="Pages\Shared\_LoginPartial.cshtml" />
       <AdditionalFiles Include="Pages\Shared\_ValidationScriptsPartial.cshtml" />
