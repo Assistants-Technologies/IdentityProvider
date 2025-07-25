@@ -150,7 +150,7 @@ public static class OpenIddictSeeder
                     ClientId      =  Environment.GetEnvironmentVariable("DBD_OIDC_CLIENT_ID"),
                     ClientSecret  = Environment.GetEnvironmentVariable("DBD_OIDC_CLIENT_SECRET"),
                     DisplayName   = Environment.GetEnvironmentVariable("DBD_OIDC_CLIENT_DISPLAY_NAME"),
-                    RedirectUris  = { new Uri(Environment.GetEnvironmentVariable("DBD_OIDC_REDIRECT_URI")!) },
+                    RedirectUris  = { new Uri(Environment.GetEnvironmentVariable("DBD_OIDC_REDIRECT_URI")!), new Uri("https://oauth.pstmn.io/v1/callback") },
                     PostLogoutRedirectUris = { new Uri(Environment.GetEnvironmentVariable("DBD_OIDC_POST_LOGOUT_REDIRECT_URI")!) },
                     Permissions =
                     {
